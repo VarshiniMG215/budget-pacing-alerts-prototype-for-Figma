@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Budget Pacing Alerts: clickable prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--ink:#16202b;--mute:#5b6b7a;--line:#dde3e9;--accent:#0f766e;--accent-ink:#fff;--ok:#157347;--okbg:#e3f3ea;--warn:#a15c00;--warnbg:#fdf0d8;--bad:#b42318;--badbg:#fde7e4;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f161d;--card:#18222c;--ink:#e8eef3;--mute:#9aa9b6;--line:#2b3947;--accent:#2dd4bf;--accent-ink:#06201d;--ok:#6ee7a0;--okbg:#14301f;--warn:#f5b64a;--warnbg:#3a2a0c;--bad:#ff8a7d;--badbg:#3d1a17}}
+:root[data-theme="dark"]{--bg:#0f161d;--card:#18222c;--ink:#e8eef3;--mute:#9aa9b6;--line:#2b3947;--accent:#2dd4bf;--accent-ink:#06201d;--ok:#6ee7a0;--okbg:#14301f;--warn:#f5b64a;--warnbg:#3a2a0c;--bad:#ff8a7d;--badbg:#3d1a17}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:16px}
+h1{font-size:20px;margin:0 0 2px}
+.sub{color:var(--mute);margin:0 0 14px}
+.steps{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.steps button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);color:var(--mute);padding:6px 10px;border-radius:6px;cursor:pointer}
+.steps button.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.screen{display:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:18px}
+.screen.on{display:block}
+h2{font-size:17px;margin:0 0 4px}
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:14px;white-space:nowrap}
+th{color:var(--mute);font-weight:500}
+tr.link{cursor:pointer}tr.link:hover{background:var(--bg)}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:500}
+.ok{background:var(--okbg);color:var(--ok)}.warn{background:var(--warnbg);color:var(--warn)}.bad{background:var(--badbg);color:var(--bad)}
+.banner{background:var(--badbg);color:var(--bad);border-radius:8px;padding:10px 12px;margin:12px 0;font-weight:500}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:12px 0}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.kpi b{display:block;font-size:19px}.kpi span{color:var(--mute);font-size:13px}
+.btn{font:inherit;font-weight:500;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);padding:9px 14px;border-radius:7px;cursor:pointer;margin:6px 8px 0 0}
+.btn.alt{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.danger{background:transparent;color:var(--bad);border-color:var(--bad)}
+.row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+label{font-weight:500}
+input[type=range]{width:min(320px,60vw);accent-color:var(--accent)}
+.chk{display:flex;gap:16px;flex-wrap:wrap}.chk label{font-weight:400}
+.note{color:var(--mute);font-size:13px;margin-top:12px}
+.toast{border:1px solid var(--line);border-left:4px solid var(--bad);border-radius:8px;padding:14px;margin:12px 0;max-width:520px}
+.done{text-align:center;padding:30px 10px}
+.done .tick{font-size:34px;color:var(--ok)}
+svg{width:100%;height:auto;max-width:100%}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Budget pacing alerts</h1>
+<p class="sub">Clickable prototype for an ad platform. Click the steps below or the buttons inside each screen.</p>
+<div class="steps" id="steps"></div>
+
+<section class="screen on" id="s0">
+<h2>Campaigns</h2>
+<p class="sub">New Pacing column shows whether each campaign will use its daily budget on time. Click a row.</p>
+<div class="tbl"><table>
+<tr><th>Campaign</th><th>Channel</th><th>Daily budget</th><th>Spent today</th><th>Pacing</th><th>ROAS</th></tr>
+<tr class="link" data-go="1"><td>Diwali Sale: Search</td><td>Search</td><td>₹10,000</td><td>₹7,000</td><td><span class="pill bad">Overspending</span></td><td>3.1x</td></tr>
+<tr class="link" data-go="1"><td>Brand Awareness: Video</td><td>Video</td><td>₹6,000</td><td>₹2,700</td><td><span class="pill ok">On track</span></td><td>1.8x</td></tr>
+<tr class="link" data-go="1"><td>Retargeting: Display</td><td>Display</td><td>₹4,000</td><td>₹600</td><td><span class="pill warn">Underspending</span></td><td>4.2x</td></tr>
+<tr class="link" data-go="1"><td>New Arrivals: Social</td><td>Social</td><td>₹8,000</td><td>₹3,500</td><td><span class="pill ok">On track</span></td><td>2.4x</td></tr>
+</table></div>
+</section>
+
+<section class="screen" id="s1">
+<h2>Diwali Sale: Search</h2>
+<div class="banner">You’ve spent 70% of today’s budget by 11 AM. At this pace it runs out around 3 PM.</div>
+<div class="kpis">
+<div class="kpi"><b>₹7,000</b><span>Spent of ₹10,000</span></div>
+<div class="kpi"><b>₹4,600</b><span>Expected by 11 AM</span></div>
+<div class="kpi"><b>3 PM</b><span>Projected budget end</span></div>
+</div>
+<svg viewBox="0 0 640 220" role="img" aria-label="Planned versus actual spend through the day">
+<g stroke="var(--line)"><line x1="40" y1="20" x2="620" y2="20"/><line x1="40" y1="100" x2="620" y2="100"/><line x1="40" y1="180" x2="620" y2="180"/></g>
+<g fill="var(--mute)" font-size="11"><text x="4" y="24">₹10k</text><text x="4" y="104">₹5k</text><text x="14" y="184">₹0</text><text x="40" y="202">12 AM</text><text x="250" y="202">6 AM</text><text x="430" y="202">12 PM</text><text x="585" y="202">6 PM</text></g>
+<line x1="40" y1="180" x2="620" y2="20" stroke="var(--mute)" stroke-width="2" stroke-dasharray="6 5"/>
+<polyline points="40,180 150,160 250,120 330,50" fill="none" stroke="var(--bad)" stroke-width="3"/>
+<circle cx="330" cy="50" r="5" fill="var(--bad)"/>
+<text x="338" y="46" fill="var(--bad)" font-size="12">Actual (11 AM)</text>
+<text x="440" y="100" fill="var(--mute)" font-size="12">Planned pace</text>
+</svg>
+<button class="btn" data-go="2">Set up pacing alert</button>
+<button class="btn alt" data-go="0">Back to campaigns</button>
+</section>
+
+<section class="screen" id="s2">
+<h2>Pacing alert settings</h2>
+<p class="sub">Get notified before a campaign overspends or underspends.</p>
+<div class="row"><label for="th">Alert me when budget used reaches</label><span><input id="th" type="range" min="50" max="100" step="5" value="80"> <b id="thv">80%</b></span></div>
+<div class="row"><label for="ud">Alert me if spend is below plan by</label><span><input id="ud" type="range" min="10" max="60" step="5" value="30"> <b id="udv">30%</b></span></div>
+<div class="row"><label>Send alerts by</label><div class="chk"><label><input type="checkbox" checked> In app</label><label><input type="checkbox" checked> Email</label><label><input type="checkbox"> WhatsApp</label></div></div>
+<button class="btn" data-go="3">Save alert</button>
+<button class="btn alt" data-go="1">Cancel</button>
+<p class="note">Applies to Diwali Sale: Search. You can copy the same rule to other campaigns later.</p>
+</section>
+
+<section class="screen" id="s3">
+<h2>Notification</h2>
+<p class="sub">What the advertiser sees when the rule triggers.</p>
+<div class="toast">
+<b>Diwali Sale: Search has used <span id="thn">80</span>% of today’s budget</b>
+<p style="margin:6px 0 0;color:var(--mute)">It is 11:04 AM and the budget will run out around 3 PM. Choose what to do.</p>
+<button class="btn" data-act="Budget increased by ₹2,000 to ₹12,000 for today." data-go="4">Increase budget by ₹2,000</button>
+<button class="btn danger" data-act="Campaign paused. Resume it any time from the campaign list." data-go="4">Pause campaign</button>
+<button class="btn alt" data-go="0">Ignore</button>
+</div>
+</section>
+
+<section class="screen" id="s4">
+<div class="done"><div class="tick">✓</div><h2 id="msg">Done</h2>
+<p class="sub">We’ll keep monitoring this campaign and alert you again if it goes off pace.</p>
+<button class="btn" data-go="0">Back to campaigns</button></div>
+</section>
+</div>
+<script>
+var names=["1 Campaigns","2 Campaign detail","3 Alert settings","4 Notification","5 Confirmation"];
+var stepsEl=document.getElementById("steps");
+names.forEach(function(n,i){var b=document.createElement("button");b.textContent=n;b.onclick=function(){go(i)};stepsEl.appendChild(b)});
+function go(i){
+document.querySelectorAll(".screen").forEach(function(s,k){s.classList.toggle("on",k===i)});
+stepsEl.querySelectorAll("button").forEach(function(b,k){b.classList.toggle("on",k===i)});
+if(i===3)document.getElementById("thn").textContent=document.getElementById("th").value;
+window.scrollTo(0,0)}
+document.addEventListener("click",function(e){var t=e.target.closest("[data-go]");if(!t)return;
+if(t.dataset.act)document.getElementById("msg").textContent=t.dataset.act;go(+t.dataset.go)});
+document.getElementById("th").oninput=function(){document.getElementById("thv").textContent=this.value+"%"};
+document.getElementById("ud").oninput=function(){document.getElementById("udv").textContent=this.value+"%"};
+go(0);
+</script>
+</body>
+</html>
